@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proto-Store</title>
+  </head>
+  <body>
+    <h1>Prototype Storage (Proto-Store) test harness</h1>
+
+    <script type="module">
+      import ProtoStore from './proto-store.js';
+
+      const EmptyStore = ProtoStore();
+      EmptyStore.collection('test1').create('1', { hello: 'world' });
+      console.log(EmptyStore.collection('test1').read('1'));
+      4;
+
+      EmptyStore.collection('test1').update('1', { hello: 'everyone' });
+      console.table(EmptyStore.collection('test1').list());
+      EmptyStore.drop('test1');
+      EmptyStore.clear();
+    </script>
+
+    <script type="module">
+      import ProtoStore from './proto-store.js';
+
+      const PrePopStore = ProtoStore({
+        test2: { 2: { farewell: 'my friend' } },
+      });
+      console.table(PrePopStore.collection('test2').list());
+
+      PrePopStore.collection('test1').create('1', { hello: 'world' });
+      console.table(PrePopStore.collection('test1').list());
+      PrePopStore.collection('test2').create('1', { hello: 'world' });
+      console.table(PrePopStore.collection('test2').list());
+    </script>
+  </body>
+</html>
