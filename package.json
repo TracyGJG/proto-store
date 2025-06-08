@@ -1,6 +1,6 @@
 {
   "name": "proto-store",
-  "version": "0.0.1",
+  "version": "1,0.0",
   "description": "A utility module to establish a convenient local storage facility for prototype development.",
   "main": "proto-store.js",
   "type": "module",
