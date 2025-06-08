@@ -1,17 +1,29 @@
 function mockWebStorage() {
-  let store = {};
+  let _store = {};
 
   return {
     getItem(key) {
-      return store[key];
+      return _store[key];
     },
 
     setItem(key, value) {
-      store[key] = value;
+      _store[key] = value;
     },
 
     removeItem(key) {
-      delete store[key];
+      delete _store[key];
+    },
+
+    clear() {
+      _store = {};
+    },
+
+    get store() {
+      return _store;
+    },
+
+    get json() {
+      return JSON.stringify(_store, 2);
     },
   };
 }

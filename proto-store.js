@@ -1,47 +1,58 @@
 const STORE_NAME = 'ProtoStore';
 
-export default function ProtoStore(dataSet = {}) {
-  const localStore = window.localStorage.getItem(STORE_NAME);
+export default function ProtoStore(dataSet = {}, globalThis = globalThis) {
+  const localStore = globalThis.localStorage.getItem(STORE_NAME);
   const dataStore = localStore
     ? JSON.parse(localStore)
     : structuredClone(dataSet);
 
+  globalThis.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+
   return {
     collection(collectionName) {
+      if (!dataStore[collectionName]) {
+        dataStore[collectionName] = {};
+        globalThis.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+      }
       const _collection = dataStore[collectionName];
+
       return {
         create(id, data) {
-          !_collection && (dataStore[collectionName] = {});
-          dataStore[collectionName][id] = structuredClone(data);
-          window.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+          changeDataStore(id, data, collectionName);
         },
         delete(id) {
           if (_collection) {
             delete _collection[id];
-            window.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+            globalThis.localStorage.setItem(
+              STORE_NAME,
+              JSON.stringify(dataStore)
+            );
           }
         },
         read(id) {
           return _collection?.[id] ? structuredClone(_collection[id]) : null;
         },
-        list() {
-          return _collection ? structuredClone(Object.values(_collection)) : [];
+        list(where = (_) => _) {
+          return structuredClone(Object.values(_collection).filter(where));
         },
         update(id, data) {
-          !_collection && (dataStore[collectionName] = {});
-          dataStore[collectionName][id] = structuredClone(data);
-          window.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+          changeDataStore(id, data, collectionName);
         },
       };
     },
     drop(collectionName) {
       if (dataStore[collectionName]) {
         delete dataStore[collectionName];
-        window.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+        globalThis.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
       }
     },
     clear() {
-      window.localStorage.removeItem(STORE_NAME);
+      globalThis.localStorage.removeItem(STORE_NAME);
     },
   };
+
+  function changeDataStore(id, data, collectionName) {
+    dataStore[collectionName][id] = structuredClone(data);
+    globalThis.localStorage.setItem(STORE_NAME, JSON.stringify(dataStore));
+  }
 }
