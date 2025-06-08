@@ -5,6 +5,7 @@ export default function ProtoStore(dataSet = {}) {
   const dataStore = localStore
     ? JSON.parse(localStore)
     : structuredClone(dataSet);
+
   return {
     collection(collectionName) {
       const _collection = dataStore[collectionName];
